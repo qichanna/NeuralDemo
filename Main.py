@@ -1,3 +1,4 @@
+#coding=utf8
 import numpy as np
 
 
@@ -24,6 +25,8 @@ class Perceptron(object):
         n_features:3
 
         y:[1,-1]
+
+        zeros函数标识初始化一个向量为0，个数为括号里的参数
         """
 
         """
@@ -33,4 +36,41 @@ class Perceptron(object):
 
         self.w_ = np.zeros(1 + X.shape[1])
         self.errors_ = []
+
+        for _ in range(self.n_iter):
+            errors = 0
+            """
+            X:[[1,2,3],[4,5,6]]
+            y:[1,-1]
+            zip(X,y) = [[1,2,3,1],[4,5,6,-1]]
+            """
+            for xi, target in zip(X,y):
+                """
+                update = eta * (y -y')
+                """
+                update = self.eta * (target - self.predict(xi))
+                """
+                xi 是一个向量
+                update * xi等价:
+                deltaW(1) = X[1] * update, deltaW(2) = X[2] * update, deltaW(3) = X[3] * update
+                """
+                self.w_[1:] += update * xi
+                self.w_[0] += update
+
+                errors += int(update != 0.0)
+                self.errors_.append(errors)
+            pass
+
+        pass
+
+    def net_input(self, X):
+        """
+        z = W0 * 1 + W1 * X1 + ... + Wn * Xn
+        """
+        #dot方法是点积
+        return np.dot(X, self.w_[1:]) + self.w_[0]
+        pass
+
+    def predict(self, X):
+        return np.where(self.net_input(X) >= 0.0, 1, -1)
         pass
